@@ -1,0 +1,87 @@
+In font-family == if 3-4 -- 1st is most important and the last one is the least favorite.
+    - So if any font is not supported for some devices then the other one will be used and so on.
+
+Important in CSs
+   - when important is used you are trying to mess with the actual css framework rules. 
+   - So generally avoid using Important sometimes it will mess up the look as it will patch the css from other places.
+
+see php configuration -- From 2:23 PM onwards
+
+
+----------------
+Basics of php
+
+Variabls  -  $ followed by any letter or underscore  $user  $x  $y -- 
+
+\n   for new line
+    if its used inside single quote  it wont work. just use backslash \
+
+comment 
+
+// 
+/* 
+    */
+
+echo "hello";  #this is a comment.
+
+--
+echo and print both -- can be used to print
+difference is ..
+echo is part of language . language contruct
+print is a function.
+
+===Expressions ,  operators and calculations in  php
+like.. +-/*
++ is an arithmatic operator in pHP.. in some language its concatination.. but its not in php
+    php will sum it.
+
+operators
+
+- increment/decrement  (++ --)
+- string concatination (.)
+- equality (== !=)
+- identity (=== !==)
+- ternary  (?:)
+- side-effect assignment - (+= -= .= etc.)
+- ignore - the rarerly-used bitwise operators(>> << ^ | &)
+
+====
+Structure of Code PHP -- MODEL VIEW CONTROLLER -- if you are building complex or dynamic web design  -- IN PHP --  Check from 05:01 PM
+-- his pattern old freecodcamp
+
+Pattern: Processing POST data
+ 
+- his suggestions
+
+    - there are many patterns for handling POST data
+    - no rules its just suggetions from him
+
+- Completely process Incoming data (if any) - produce no output.
+- Product the page output
+
+- its like... at the top we handle Incoming data and at bottom we handle Template
+
+1. Handle Incoming data - at the top
+    -no output here.
+2. Template - print the output at the bottom
+    - produce out put.
+
+So we code the Incoming data code on the top and ... we write code for output at the bottom.
+
+
+ - Model-View-Controller - that defines the elements of a web application and how they interect.
+ - View - Produce output
+ - Model  - Handle data
+ - Controller - Orchestration / Routing
+
+
+Top part of the code(NO HTML - all the database or sql happens there.) - handels the data   -
+    - called context - the controller passes to the view
+Bottom part of the code (NO DATABASE - all the html happens here - there may be a loop or if.. but not something that talks to a database) - produces the output
+
+-- SO the goal of the model is to pass down the context 
+
+
+
+----
+Practice with forms.
