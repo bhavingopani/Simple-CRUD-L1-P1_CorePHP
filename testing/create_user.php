@@ -1,5 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
+
+
+<?php
+#save all the things and save data in the database
+
+
+//have to user variable assign all database details
+$servername = "localhost";
+$username = "root";
+$password = "1478";
+$dbname = "crudapp1php";
+
+//Creating/Making Connection by creating instance of mysqli class -
+$connection = new mysqli($servername, $username, $password, $dbname);
+
+//Check if the connection was successfull or not otherwise it will throgh an error
+if ($connection->connect_error) {
+    die("Connection failed: " .  $connection->connect_error); #will throgh an exception and print the same
+}
+
+echo "Database Connected Successfully";  #if no errors then.... will show print this message.
+
+
+
+
+//checking if its a POST request -- otherwise it will start creating empty records.
+if($_SERVER['REQUEST_METHOD'] === 'POST'){
+
+//saving all the data coming from the from to the respective variables.
+$first_name = $_POST['first_name'];
+$last_name = $_POST['last_name'];
+$email = $_POST['email'];
+$password = $_POST['password'];
+$confirm_password = $_POST['confirm_password'];
+
+
+
+//Writing query and saving it to sql variable.
+$sql = "INSERT INTO create_user (first_name, last_name, email, password)
+            VALUES ('$first_name', '$last_name', '$email', '$password')";
+
+//Executing the above query and it will create row in the table.
+if($connection->query($sql) === TRUE) {
+    echo "New record created successfully";
+} else {
+    echo "Error: " . $sql . "<br>" . $connection->error;
+}
+
+//Closing the connection once we dont need it
+$connection->close();
+
+
+}
+
+
+?>
+
+
+
+
+
+<html>
 
 <head>
     <meta charset="UTF-8">
@@ -9,7 +69,7 @@
 </head>
 
 <body>
-    <form method="POST">
+    <form  method="POST">
         <div>
             <label for="first_name"> First Name </label></br>
             <input type="text" name="first_name">
@@ -63,58 +123,8 @@ print_r($_GET)
 print_r($_POST)
 ?>
 </pre>
+
+
 </body>
 
 </html>
-
-
-
-
-
-<?php
-#save all the things and save data in the database
-
-
-//have to user variable assign all database details
-$servername = "localhost";
-$username = "root";
-$password = "1478";
-$dbname = "create_user";
-
-//Creating/Making Connection by creating instance of mysqli class -
-$connection = new mysqli($servername, $username, $password, $dbname);
-
-//Check if the connection was successfull or not otherwise it will throgh an error
-if ($connection->connect_error) {
-    die("Connection failed: " .  $connection->connect_error); #will throgh an exception and print the same
-}
-
-echo "Database Connected Successfully";  #if no errors then.... will show print this message.
-
-
-
-//saving all the data coming from the from to the respective variables.
-$first_name = $_POST['first_name'];
-$last_name = $_POST['last_name'];
-$email = $_POST['email'];
-$password = $_POST['password'];
-$confirm_password = $_POST['confirm_password'];
-
-//Writing query and saving it to sql variable.
-$sql = "INSERT INTO create_user (first_name, last_name, email, password )
-            VALUES ($first_name, $last_name, $email, $password)";
-
-//Executing the above query and it will create row in the table.
-if($connection->query($sql) === TRUE) {
-    echo "New record created successfully";
-} else {
-    echo "Error: " . $sql . "<br>" . $connection->error;
-}
-
-
-//Closing the connection once we dont need it
-$connection->close();
-
-?>
-
-START WITH MYSQLI CONFIGURATION-- in config file of php... THAT IS WHY ITS NOT TAKING MAY BE
