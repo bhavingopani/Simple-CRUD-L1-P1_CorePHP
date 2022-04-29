@@ -3,35 +3,75 @@
 //have to user variable assign all database details
 $servername = "localhost";
 $username = "root";
-$password = "1478";
+$dbpassword = "1478";
 $dbname = "crudapp1php";
 
 //Creating/Making Connection by creating instance of mysqli class -
-$connection = new mysqli($servername, $username, $password, $dbname);
+$connection = new mysqli($servername, $username, $dbpassword, $dbname);
 
 //Check if the connection was successfull or not otherwise it will throgh an error
 if ($connection->connect_error) {
     die("Connection failed: " .  $connection->connect_error); #will throgh an exception and print the same
 }
 
-echo "Database Connected Successfully";  #if no errors then.... will show print this message.
+// echo "Database Connected Successfully";  #if no errors then.... will show print this message.
 
 
 $sql ="SELECT * FROM create_user";
 
-$result = mysqli_query($connection, $sql);
+// $result = mysqli_query($connection, $sql);
+$result = $connection->query($sql);
 
-$row = mysqli_fetch_assoc($result);
+#PAGINATION
 
+
+$results_per_page = 10;
+
+
+#Get total number of pages
+
+$number_of_results = mysqli_num_rows($result); #this will give number of rows 
+
+$number_of_page = ceil( $number_of_results/$results_per_page ); #number of page #ceil gives rounds the number to the nearest integer
+
+#get the current page user is on -- if no records then by default its 1
+
+if(!isset($_GET['page'])) {
+    $page = 1;
+} else {
+    $page = $_GET['page'];
+}
+
+#Set limit for 1 page.. here its 10
+
+$page_first_result = ($page - 1)* $results_per_page;
+
+
+$sql_new ="SELECT * FROM create_user LIMIT $page_first_result , $results_per_page";
+
+
+
+// $result = mysqli_query($connection, $sql);
+$result_new = $connection->query($sql_new);
+
+#PAGINATION
+
+
+// $row = mysqli_fetch_assoc($result);
+
+// $result ->fetch_all(MYSQLI_ASSOC);
+
+// var_dump($result);
+// print_r($result);
+
+
+
+// $first_name = $row['first_name'];
+// $last_name = $row['last_name'];
+// $email = $row['email'];
+// $password = $row['password'];
 
 ?>
-
-
-
-
-
-
-
 
 <html>
 <head>
@@ -58,44 +98,57 @@ $row = mysqli_fetch_assoc($result);
 <div >
 <table>
     <tr>
+    <th> id </th>
     <th> First Name </th>
     <th> Last Name </th>
     <th> Email </th>
     <th>Edit</th>
     <th>Delete</th>
     </tr>
+    
     <?php
-    echo "<tr>";
-        
-    echo "<td>". $row['first_name'] . "</td>";
-    echo "<td>" . $row['last_name'] . "</td>";
-    echo "<td>". $row['email'] . "</td>";
-    echo "<td><a href=$row['id']>" . "Edit" . "</a>" . "</td>";
-    echo "<td><a href=$row['id']>" . "Delete" . "</a></td>";
-    echo "</tr>";
+    while ($row_new= mysqli_fetch_array($result_new)){
+
+        echo "<tr>";
+        echo "<td>". $row_new['id'] . "</td>";
+        echo "<td>" . $row_new['first_name'] . "</td>";
+        echo "<td>". $row_new['last_name'] . "</td>";
+        echo "<td>" . $row_new['email']. "</td>";
+        echo "<td><a href=" . $row_new['id'] . ">" .  "Edit </a></td>";
+        echo "<td><a href=" . $row_new['id'] . ">" .  "Delete </a></td>";
+        echo "</tr>";
+
+    }
+
+
     ?>
 </table>
 </div>
 
 
 
-<pre>
-    DATA from GET request
 <?php
-print_r($_GET)
+
+
+
+    #Display link of the urls of the pages.    
+    
+
+// if (    );        
+
+    
+    echo "<a href=''>" . "Next" ." </a>";
+    
+    "<div>";
+    for($page=1; $page<=$number_of_page; $page++) {
+        echo "<a href='user_list.php?page=$page'>" . $page . "</a>" . "&nbsp";
+    }
+    "</div>";
+
+    echo "<a href=''>" . "Previous" ." </a>";
 ?>
-</pre>
 
-<pre>
-    DATA from POST request
-<?php
-print_r($_POST)
-?>
-</pre>
-
-
-
-
+START WITH PAGINAATION ---  LINKING AND --ALL
 
 </body>
 </html>
