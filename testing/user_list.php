@@ -128,13 +128,31 @@ $result_new = $connection->query($sql_new);
                 echo "<td>" . $row_new['first_name'] . "</td>";
                 echo "<td>" . $row_new['last_name'] . "</td>";
                 echo "<td>" . $row_new['email'] . "</td>";
-                echo "<td><a href=" . $row_new['id'] . ">" .  "Edit </a></td>";
-                echo "<td><a href=" . $row_new['id'] . ">" .  "Delete </a></td>";
+                echo "<td><a href=" . "/edit_user.php?id=" . $row_new['id'] . ">" .  "Edit </a></td>";
+                echo "<td name=" . "delete1" . "><a href=" . "/user_list.php?id=" . $row_new['id'] . " " . "name=" . "delete1" . ">" .  "Delete </a></td>";
                 echo "</tr>";
             }
 
 
+
+            #deleting the user
+            if (isset($_GET["delete1"])) {
+                $current_delete_id = $_GET['id'];
+                $delete_sql = "DELETE FROM create_user WHERE id= $current_delete_id";
+
+                // $last_result = $connection->query($delete_sql);
+                if ($connection->query($delete_sql) === TRUE) {
+                    $success_message = "The record has been deleted successfully";
+                } else {
+                    $db_error_message = "Error: " . $sql . "<br>" . $connection->error;
+                }
+            }
+
+
+
+
             ?>
+            <!-- <a href="google.com" name="delete"> </a> -->
         </table>
     </div>
 
@@ -175,7 +193,7 @@ $result_new = $connection->query($sql_new);
         for ($page = 1; $page <= $number_of_page; $page++) {
             echo "<a href=?page=$page>" . $page . "</a>" . "&nbsp";
             // return 1;
-        
+
         }
         // echo $page;  #WHY IT STILL KEEPS THE VALUE OUTSIDE OF THE LOOP - CHECK AND ASK LATER. #hence cannot use the logic of next button after this as this has wrong value.
         ?>
@@ -184,6 +202,19 @@ $result_new = $connection->query($sql_new);
     <div class='new'>
         <a href="/create_user.php"> Creat User </a>
     </div>
+
+    <div>
+        <?php
+        if (isset($success_message)){
+            echo $success_message;
+        }
+        if (isset($db_error_message)){
+            echo $db_error_message;
+        }
+        
+        ?>
+    </div>
+
 
 
     <!-- <ul>

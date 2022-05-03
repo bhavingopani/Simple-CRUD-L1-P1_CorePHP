@@ -57,32 +57,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $confirm_password = $_POST['confirm_password'];
     }
 
-    $confirm_password = $_POST['confirm_password'];
+    // $confirm_password = $_POST['confirm_password'];
 
     // if (empty($anyErr)){
     //     echo "the value is there";
     // }
     // echo $firstnameErr;
-    if ($firstNameErr == "" and $emailErr =="" and $passwordErr=="" and $confirmPasswordErr=="") {
+    if ($firstNameErr == "" and $emailErr == "" and $passwordErr == "" and $confirmPasswordErr == "") {
         //Writing query and saving it to sql variable.
         // echo "What?";
-        
-        $sql = "INSERT INTO create_user (first_name, last_name, email, password)
-        VALUES ('$first_name', '$last_name', '$email', '$password')";
-        
-        //Executing the above query and it will create row in the table.
-        if ($connection->query($sql) === TRUE) {
-            $success_message = "New record created successfully";
-        } else {
-            $db_error_message = "Error: " . $sql . "<br>" . $connection->error;
+        $validation_query = "SELECT * FROM create_user WHERE email ='" . $email . "'";
+        // if ($connection->query($validation_query) === TRUE) {
+        //     $success_message = "New record created successfully";
+        // } else {
+        //     $db_error_message = "Error: " . $validation_query . "<br>" . $connection->error;
+        // }
+        #we can avoid writing the bb error thing every time if you are confident
+
+        $result_now = $connection->query($validation_query);
+
+        if (mysqli_num_rows($result_now)) {
+            $email_already_err = "This email address is already in use!";
+            } else {
+            if ($password === $confirm_password) {
+                
+                $hash = password_hash( $password, PASSWORD_DEFAULT);
+
+                // echo "Generated has: " . $hash;
+                $password = $hash;
+                $email_status = "Not Verified"; #default value not_varified
+                #cleaning the data -- otherwise witll throgh en Eroor. Sanitize the data
+                    #it should be in plain text
+                // $mysqli->real_escape_String($email_status);
+                // $email_status=htmlspecialchars($email_status);
+
+                $sql = "INSERT INTO create_user (first_name, last_name, email,email_status, password)
+                VALUES ('$first_name', '$last_name', '$email','$email_status', '$password')";
+                //Executing the above query and it will create row in the table.
+                if ($connection->query($sql) === TRUE) {
+                    $success_message = "New record created successfully";
+                } else {
+                    $db_error_message = "Error: " . $sql . "<br>" . $connection->error;
+                }
+                // $connection->close();
+                //Closing the connection once we dont need it
+
+                #Sending an email to the user
+                $to  = $email;
+                $from = "testpatel456@gmail.com";
+                $msg = "Click on the below link to virify your account";
+                $subject = "Email Verification";
+
+                mail($to, $subject, $msg);
+
+
+
+            } else {
+                $password_mismatch_Err = "Password and confirm password do not match!";
+            }
         }
-        $connection->close();
-        //Closing the connection once we dont need it
-        // $connection->close();
-    } else{
+    } else {
         $connection->close();
         // echo "connection closed";
-    }  
+    }
 }
 
 
@@ -101,6 +138,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     .error {
         color: red;
     }
+
+    .pass_mismatch_err {
+        color: red;
+    }
+
+    .success {
+        color: green;
+    }
 </style>
 
 <head>
@@ -112,7 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
     <form method="POST">
-        
+
         <div>
             <label for="first_name"> First Name </label></br>
             <input type="text" name="first_name">
@@ -142,6 +187,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php
                 if (isset($emailErr)) {
                     echo $emailErr;
+                }
+                if (isset($email_already_err )){
+                    echo $email_already_err;
                 }
                 ?>
             </span>
@@ -179,22 +227,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </form>
     </br>
-    <div class= "success">
-        <?php 
-        if (isset($success_message)){
-            echo $success_message; 
+    <div class="success">
+        <?php
+        if (isset($success_message)) {
+            echo $success_message;
         }
         ?>
     </div>
-    <div class= "error">
-        <?php 
-        if (isset($db_error_message)){
-            echo $db_error_message; 
+    <div class="pass_mismatch_err">
+        <?php
+        if (isset($password_mismatch_Err)) {
+            echo $password_mismatch_Err;
         }
         ?>
     </div>
 
+    <div class="error">
+        <?php
+        if (isset($db_error_message)) {
+            echo $db_error_message;
+        }
+        ?>
+    </div>
 
+    </br> </br></br>
     <pre>
     DATA from GET request
 <?php
