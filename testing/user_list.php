@@ -128,25 +128,29 @@ $result_new = $connection->query($sql_new);
                 echo "<td>" . $row_new['first_name'] . "</td>";
                 echo "<td>" . $row_new['last_name'] . "</td>";
                 echo "<td>" . $row_new['email'] . "</td>";
-                echo "<td><a href=" . "/edit_user.php?id=" . $row_new['id'] . ">" .  "Edit </a></td>";
-                echo "<td name=" . "delete1" . "><a href=" . "/user_list.php?id=" . $row_new['id'] . " " . "name=" . "delete1" . ">" .  "Delete </a></td>";
+                echo "<td><a href=" . "edit_user.php?id=" . $row_new['id'] . ">" .  "Edit </a></td>";
+                // echo "<td><button type=submit name=delete><a href=user_list.php?id=" . $row_new['id']  .">". "Delete" . "</button></td>";
+                echo "<td><a href=" . "delete_user.php?id=" . $row_new['id'] . ">" .  "Delete </a></td>";
+                
                 echo "</tr>";
             }
 
 
+            // $current_delete_id = $_GET['id'];
+            // echo $current_delete_id;
+// CHECK FROM HERE-- Not able to delete the same.
+            // #deleting the user - 
+            // if (isset($_GET["delete1"])) {
+           
+            //     $delete_sql = "DELETE FROM create_user WHERE id= $current_delete_id";
 
-            #deleting the user
-            if (isset($_GET["delete1"])) {
-                $current_delete_id = $_GET['id'];
-                $delete_sql = "DELETE FROM create_user WHERE id= $current_delete_id";
-
-                // $last_result = $connection->query($delete_sql);
-                if ($connection->query($delete_sql) === TRUE) {
-                    $success_message = "The record has been deleted successfully";
-                } else {
-                    $db_error_message = "Error: " . $sql . "<br>" . $connection->error;
-                }
-            }
+            //     // $last_result = $connection->query($delete_sql);
+            //     if ($connection->query($delete_sql) === TRUE) {
+            //         $success_message = "The record has been deleted successfully";
+            //     } else {
+            //         $db_error_message = "Error: " . $sql . "<br>" . $connection->error;
+            //     }
+            // }
 
 
 
