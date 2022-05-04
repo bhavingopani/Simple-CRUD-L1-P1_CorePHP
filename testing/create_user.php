@@ -1,4 +1,10 @@
 <?php
+#install composer first then do the below import - Composer is a tool for dependency management in PHP. It allows you to declare the libraries your project depends on and it will manage (install/update) them for you.
+
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 #save all the things and save data in the database
 
 
@@ -26,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     //for validation err.. added this after writing logic as we will have to need this.. later
     $anyErr = $firstNameErr = $emailErr = $passwordErr = $confirmPasswordErr = "";
-    $first_name = $email = $password = $confirm_password = ""; #assuming empty so that we don't have warning of undefined variable. 
+    $first_name = $email_new = $password = $confirm_password = ""; #assuming empty so that we don't have warning of undefined variable. 
 
     //saving all the data coming from the from to the respective variables.
     if (empty($_POST['first_name'])) {
@@ -42,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($_POST['email'])) {
         $emailErr = "Email is required";
     } else {
-        $email = $_POST['email'];
+        $email_new = $_POST['email'];
     }
 
     if (empty($_POST['password'])) {
@@ -66,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($firstNameErr == "" and $emailErr == "" and $passwordErr == "" and $confirmPasswordErr == "") {
         //Writing query and saving it to sql variable.
         // echo "What?";
-        $validation_query = "SELECT * FROM create_user WHERE email ='" . $email . "'";
+        $validation_query = "SELECT * FROM create_user WHERE email ='" . $email_new . "'";
         // if ($connection->query($validation_query) === TRUE) {
         //     $success_message = "New record created successfully";
         // } else {
@@ -78,37 +84,101 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (mysqli_num_rows($result_now)) {
             $email_already_err = "This email address is already in use!";
-            } else {
+        } else { 
+            
             if ($password === $confirm_password) {
-                
-                $hash = password_hash( $password, PASSWORD_DEFAULT);
+
+                $hash = password_hash($password, PASSWORD_DEFAULT);
 
                 // echo "Generated has: " . $hash;
                 $password = $hash;
                 $email_status = "Not Verified"; #default value not_varified
                 #cleaning the data -- otherwise witll throgh en Eroor. Sanitize the data
-                    #it should be in plain text
+                #it should be in plain text
                 // $mysqli->real_escape_String($email_status);
                 // $email_status=htmlspecialchars($email_status);
 
                 $sql = "INSERT INTO create_user (first_name, last_name, email,email_status, password)
-                VALUES ('$first_name', '$last_name', '$email','$email_status', '$password')";
+                    VALUES ('$first_name', '$last_name', '$email_new','$email_status', '$password')";
                 //Executing the above query and it will create row in the table.
                 if ($connection->query($sql) === TRUE) {
                     $success_message = "New record created successfully";
                 } else {
                     $db_error_message = "Error: " . $sql . "<br>" . $connection->error;
                 }
-                // $connection->close();
-                //Closing the connection once we dont need it
 
-                #Sending an email to the user
-                $to  = $email;
-                $from = "testpatel456@gmail.com";
-                $msg = "Click on the below link to virify your account";
-                $subject = "Email Verification";
 
-                mail($to, $subject, $msg);
+
+
+                require '/usr/share/php/Composer/autoload.php';
+
+
+                $mail = new PHPMailer(true);
+                // $mail = new PHPMailer\PHPMailer\PHPMailer();
+
+
+
+                try {
+
+                    $mail->SMTPDebug = 2;                  //Enable SMTP debugging.
+                    $mail->isSMTP();                        // Set mailer to use SMTP
+                    $mail->Host       = 'smtp.gmail.com;';    // Specify main SMTP server
+                    $mail->SMTPAuth   = true;               // Enable SMTP authentication
+                    $mail->Username   = 'testpatel456@gmail.com';     // SMTP username
+                    $mail->Password   = 'Test@123';         // SMTP password
+                    $mail->SMTPSecure = 'tls';              // Enable TLS encryption, 'ssl' also accepted
+                    $mail->Port       = 587;                // TCP port to connect to
+
+
+                    #Add the recipients of the mail.
+                    $mail->setFrom('testpatel456@gmail.com', 'TestName');           // Set sender of the mail
+                    $mail->addAddress('gopani7874@gmail.com');           // Add a recipient
+                    // $mail->addAddress('receiver2@gfg.com', 'Name');   // Name is optional
+
+
+
+                    // $mail->isHTML(true);                                  
+                    $mail->Subject = 'Email Verification';
+                    $mail->Body    = 'Please verify the email and click below link to verify';
+                    // $mail->AltBody = 'Body in plain text for non-HTML mail clients';
+
+                    $mail->send();
+
+                    echo "Mail has been sent successfully!";
+                } catch (Exception $e) {
+                    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+                }
+
+
+
+
+
+
+                // } catch (Exception $e) {
+                //         echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+                //     } 
+
+                #The "catch" block retrieves the exception and creates an object ($e) containing the exception information
+                #The error message from the exception is echoed by calling $e->getMessage() from the exception object
+
+
+
+                // $to  = $email;
+                // $subject = "Email Verification";
+                // $message = "Click on the below link to virify your account";
+                // $from = "testpatel456@gmail.com";
+                // $headers = "From: $from";
+                // $headers = [   //can also pass MIME-version:1.0",
+                //      "Content-type: text/plain; charset=utf-8",    
+                //     "From: testpatel456@gmail.com"
+                //      "Cc: gopani7874@gmail.com"
+                // ];
+
+
+                #this we can use for live server easily.. but sending from localhost needs a lot of configuration.
+                // mail($to, $subject, $message, $headers); #if you want to send cc then you can pass it as headers parameter in the last after the message and .. the same for bcc too.
+
+                // echo "email sent successfully";
 
 
 
@@ -116,6 +186,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $password_mismatch_Err = "Password and confirm password do not match!";
             }
         }
+
+        
     } else {
         $connection->close();
         // echo "connection closed";
@@ -188,7 +260,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (isset($emailErr)) {
                     echo $emailErr;
                 }
-                if (isset($email_already_err )){
+                if (isset($email_already_err)) {
                     echo $email_already_err;
                 }
                 ?>
@@ -249,6 +321,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         ?>
     </div>
+
+    </br></br>
+    <div>
+
+    </div>
+
 
     </br> </br></br>
     <pre>
