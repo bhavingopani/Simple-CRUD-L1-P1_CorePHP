@@ -1,12 +1,23 @@
 <?php
 #install composer first then do the below import - Composer is a tool for dependency management in PHP. It allows you to declare the libraries your project depends on and it will manage (install/update) them for you.
+// include  '/usr/share/php/Composer/autoload.php';
+// require  '/usr/share/php/Composer/autoload.php';
+// require 'vendor/autoload.php';
 
 
 use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
-#save all the things and save data in the database
+// require  '/usr/share/php/Composer/autoload.php';
+require 'vendor/autoload.php';
+// use PHPMailer\PHPMailer\PHPMailer;
+// // use PHPMailer\PHPMailer\SMTP;
+// use PHPMailer\PHPMailer\Exception;
 
+
+#save all the things and save data in the database
+// $mail = new PHPMailer(true);
 
 //have to user variable assign all database details
 $servername = "localhost";
@@ -108,18 +119,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
 
-
-
-                require '/usr/share/php/Composer/autoload.php';
-
-
+                
+                // // use PHPMailer\PHPMailer\PHPMailer;
+                // use PHPMailer\PHPMailer\SMTP;
+                // use PHPMailer\PHPMailer\Exception;
+                // $mail = PHPMailer();
                 $mail = new PHPMailer(true);
                 // $mail = new PHPMailer\PHPMailer\PHPMailer();
-
-
-
                 try {
 
+                    
                     $mail->SMTPDebug = 2;                  //Enable SMTP debugging.
                     $mail->isSMTP();                        // Set mailer to use SMTP
                     $mail->Host       = 'smtp.gmail.com;';    // Specify main SMTP server
@@ -137,7 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-                    // $mail->isHTML(true);                                  
+                    $mail->isHTML(true); #making it true as we want to send some html for the verification .. once clicked on that link user will be redirected to verification page.                                 
                     $mail->Subject = 'Email Verification';
                     $mail->Body    = 'Please verify the email and click below link to verify';
                     // $mail->AltBody = 'Body in plain text for non-HTML mail clients';
@@ -145,6 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $mail->send();
 
                     echo "Mail has been sent successfully!";
+
                 } catch (Exception $e) {
                     echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
                 }
