@@ -103,21 +103,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 // echo "Generated has: " . $hash;
                 $password = $hash;
-                $email_status = "Not Verified"; #default value not_varified
+                $email_status = "not_verified"; #default value not_varified
                 #cleaning the data -- otherwise witll throgh en Eroor. Sanitize the data
                 #it should be in plain text
                 // $mysqli->real_escape_String($email_status);
                 // $email_status=htmlspecialchars($email_status);
 
-                $sql = "INSERT INTO create_user (first_name, last_name, email,email_status, password)
-                    VALUES ('$first_name', '$last_name', '$email_new','$email_status', '$password')";
+                #generating random string first
+                $random_string = rand();
+                $email_v_hash = md5($random_string); #it will generate an alpha-numeric hashed string that we can use to for email verification
+                // echo $email_v_hash; 
+
+                $sql = "INSERT INTO create_user (first_name, last_name, email,email_status, email_v_hash,  password)
+                    VALUES ('$first_name', '$last_name', '$email_new','$email_status', '$email_v_hash' , '$password')";
                 //Executing the above query and it will create row in the table.
                 if ($connection->query($sql) === TRUE) {
                     $success_message = "New record created successfully";
                 } else {
                     $db_error_message = "Error: " . $sql . "<br>" . $connection->error;
                 }
+                
+                $get_new_email_dbid_query = "SELECT id FROM create_user WHERE email = '$email_new'";
 
+                 $new_result_for_new_dbid = $connection->query($get_new_email_dbid_query);
+
+                 while ($row_new_one = mysqli_fetch_array($new_result_for_new_dbid)) {
+                   $new_email_dbid = $row_new_one[0] ;
+                 }
 
                 
                 // // use PHPMailer\PHPMailer\PHPMailer;
@@ -129,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 try {
 
                     
-                    $mail->SMTPDebug = 2;                  //Enable SMTP debugging.
+                    $mail->SMTPDebug = false;                  //Enable SMTP debugging. #should keep it false otherwise you will have all the details on the screen .. Keep it true only if you want to debug or sometimes you have to debug to resolve error.
                     $mail->isSMTP();                        // Set mailer to use SMTP
                     $mail->Host       = 'smtp.gmail.com;';    // Specify main SMTP server
                     $mail->SMTPAuth   = true;               // Enable SMTP authentication
@@ -148,19 +160,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     $mail->isHTML(true); #making it true as we want to send some html for the verification .. once clicked on that link user will be redirected to verification page.                                 
                     $mail->Subject = 'Email Verification';
-                    $mail->Body    = 'Please verify the email and click below link to verify';
+                    $mail->Body    = "Please verify the email and click below link to verify  <a href= http://freecodepractice.com/email_verification.php?email_v_hash=" . $email_v_hash . "> Click here to verify </a>";
                     // $mail->AltBody = 'Body in plain text for non-HTML mail clients';
-
+                    // /home/g21/Projects/simple_crud-level1-project1_CorePHP/testing/email_v_file.php
                     $mail->send();
 
-                    echo "Mail has been sent successfully!";
+                    echo "<font color='blue'> A verification email has been sent successfully! to your email id. Please check your mailbox and verify the same." . "</font>";
 
-                } catch (Exception $e) {
+                } catch (Exception $e) { #
                     echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
                 }
-
-
-
 
 
 
@@ -264,7 +273,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div>
             <label> Email </label></br>
-            <input type="text" name="email">
+            <input type="email" name="email">
             <span class="error">
                 <?php
                 if (isset($emailErr)) {

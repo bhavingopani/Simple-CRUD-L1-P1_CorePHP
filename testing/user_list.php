@@ -116,6 +116,7 @@ $result_new = $connection->query($sql_new);
                 <th> First Name </th>
                 <th> Last Name </th>
                 <th> Email </th>
+                <th> Account Status </th>
                 <th>Edit</th>
                 <th>Delete</th>
             </tr>
@@ -128,6 +129,7 @@ $result_new = $connection->query($sql_new);
                 echo "<td>" . $row_new['first_name'] . "</td>";
                 echo "<td>" . $row_new['last_name'] . "</td>";
                 echo "<td>" . $row_new['email'] . "</td>";
+                echo "<td>" . $row_new['email_status'] . "</td>";
                 echo "<td><a href=" . "edit_user.php?id=" . $row_new['id'] . ">" .  "Edit </a></td>";
                 // echo "<td><button type=submit name=delete><a href=user_list.php?id=" . $row_new['id']  .">". "Delete" . "</button></td>";
                 echo "<td><a href=" . "delete_user.php?id=" . $row_new['id'] . ">" .  "Delete </a></td>";
