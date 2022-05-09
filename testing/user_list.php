@@ -113,8 +113,9 @@ $result_new = $connection->query($sql_new);
         <table>
             <tr>
                 <th> id </th>
-                <th> First Name </th>
-                <th> Last Name </th>
+                <!-- Add Full Name instead of first and last later on -->
+                <th> Full Name </th>
+                
                 <th> Email </th>
                 <th> Account Status </th>
                 <th>Edit</th>
@@ -126,8 +127,8 @@ $result_new = $connection->query($sql_new);
 
                 echo "<tr>";
                 echo "<td>" . $row_new['id'] . "</td>";
-                echo "<td>" . $row_new['first_name'] . "</td>";
-                echo "<td>" . $row_new['last_name'] . "</td>";
+                echo "<td>" . $row_new['first_name'] . " " . $row_new['last_name'] . "</td>";
+   
                 echo "<td>" . $row_new['email'] . "</td>";
                 echo "<td>" . $row_new['email_status'] . "</td>";
                 echo "<td><a href=" . "edit_user.php?id=" . $row_new['id'] . ">" .  "Edit </a></td>";

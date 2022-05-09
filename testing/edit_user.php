@@ -23,15 +23,20 @@ $result = $connection->query($sql);
 
 
 
-
+echo $current_id;
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
+
+<html>
 
 <head>
-    <meta charset="UTF-8">how to check if a variable has some value php
-        <?php
+
+<form method="POST" action=/update_user.php>
+    <?php 
+
+    // "<form"  . "method=" . "POST" . "action=/update_user.php?id=" .  $current_id . ">";
+    // "<form"  . "method=" . "POST" . "action=/update_user.php>";
+
 
         while ($row = $result->fetch_assoc()) {
             $current_fname = $row['first_name'];
@@ -39,7 +44,9 @@ $result = $connection->query($sql);
             $current_email = $row['email'];
             //  $current_password = $row['password'];
             // echo $current_fname;
+            $current_id = $row['id']; #will be sent to the update_user.php form 
 
+            echo "<input  type=hidden name=current_id value=" . $current_id . ">";  #passing the id from here so that we can fetch this on the update page.
             echo "<div>";
             echo     "<label for=" . "first_name" . ">" . "First Name </label></br>";
             echo     "<input type='text'" . "name='first_name'"  . "value=" . $current_fname . ">";
@@ -75,6 +82,7 @@ $result = $connection->query($sql);
 
         ?>
     </form>
+
     </br></br></br></br>
 
     <?php

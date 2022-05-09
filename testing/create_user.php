@@ -153,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     #Add the recipients of the mail.
                     $mail->setFrom('testpatel456@gmail.com', 'TestName');           // Set sender of the mail
-                    $mail->addAddress('gopani7874@gmail.com');           // Add a recipient
+                    $mail->addAddress("{$email_new}");  // Add a recipient
                     // $mail->addAddress('receiver2@gfg.com', 'Name');   // Name is optional
 
 
